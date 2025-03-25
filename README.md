@@ -1,5 +1,3 @@
-# c-
-
 
 #include <iostream>
 
@@ -8,14 +6,14 @@ namespace graph{
     class Graph{
         private:
             const int num;
-
+    
         public:
-
+    
         Graph(int x): num(x){}  //restart list bacuse of the const
-
-
+    
+    
     };
-
+    
     class Node{
         private:
         int name;
@@ -29,17 +27,17 @@ namespace graph{
             index=0;
             name=id;
         }
-
+    
         void addSon( Node* v, int w){
             son[index]=v;
             weight[index]=w;
             index++;
         }
-
+    
         int getName(){
             return name;
         }
-
+    
         void delSon(Node* v){
             int delNum= (*v).getName();
             bool found=false;
@@ -61,27 +59,27 @@ namespace graph{
                 //here we need to add error
             }
         
-
+    
         }
-
+    
         void print (){
             std::cout<<name;
             for(int i=0;i<index;i++){
                 std::cout<<son[i]->getName();
             }
         }
-
-
+    
+    
     };
-}
-
-int main(){
-    using namespace graph;
-
+    
+    }
+    
+    int main(){ using namespace graph;
+    
     Node a= Node(3,3);
-    Node b= Node(4,3);
-
+    Node b= Node(4,4);
+    
     a.addSon(&b,4);
     a.print();
-
-}
+    
+    }
