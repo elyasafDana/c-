@@ -27,10 +27,16 @@ namespace graph{
             index=0;
             name=id;
         }
+        
     
         void addSon( Node* v, int w){
             son[index]=v;
             weight[index]=w;
+            index++;
+        }
+        void addSon( Node* v){
+            son[index]=v;
+            weight[index]=1;
             index++;
         }
     
