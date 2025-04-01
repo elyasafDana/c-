@@ -222,20 +222,20 @@ class Node{
             while (x<index && x!=arrSize&& arr[x]!=NULL)
             {
                 arr[x]=NULL;
-                cout<<"deleting"<<x<<endl;
+                
                 arr[x]=arr[x+1];
-                cout<<"deleting"<<x<<endl;
+               
                 x++;
             }  
             if (arr[x]!=NULL)
             {
-                cout<<"de";
+             
                  arr[x]=NULL;
 
             }
-            cout<<"asdas";
+           
             index--;      
-            cout<<"done"<<x<<endl;
+            
             return r;
         }
         void printQ(){
@@ -243,7 +243,7 @@ class Node{
             {
                 cout<<arr[i]->getName()<<endl;
             }
-            cout<<"done loop"<<endl;
+            
             
         }
         bool isEmpty(){
@@ -267,13 +267,19 @@ class Node{
                 }
 
             }
+            cout<<"found MIn"<<min->getName()<<"value:"<<min->getValue()<<endl;
+            /*
             while(minIndex<index-1){
-                delete arr[minIndex];
+             arr[minIndex]=NULL;
                 arr[minIndex]=arr[minIndex+1];
                 minIndex=minIndex+1;
             }
-            delete arr[minIndex];
-            return min;
+             arr[minIndex]=NULL;
+             index--;
+             return min;
+             */
+            
+            return remove(minIndex);
         }
 
     };
@@ -375,10 +381,10 @@ class Node{
                 Node * temp=q.getMin();
                 Node** sons=temp->getSons();
                 int * w=temp->getWeight();
-
                 for(int i=0;i<temp->getNumOfSons();i++){
-                    if(w[i]+n->getValue()<sons[i]->getValue()){
-                        sons[i]->setValue(w[i]+n->getValue());
+                    if(w[i]+temp->getValue()<sons[i]->getValue()){
+                        cout<<"in node "<<temp->getName()<<" to "<<sons[i]->getName()<<" changing "<<temp->getValue()<<" to "<<w[i]<<"+"<<temp->getValue()<<endl;
+                        sons[i]->setValue(w[i]+temp->getValue());
                     }
                 }
             }
@@ -435,18 +441,28 @@ class Node{
     cout<<"this is B:"<<endl;
     B.printGrapgh();
 
-    cout<<"this is c:"<<endl;
+    
 
     Graph c=DFS(A,A.getNodeAtIndex(6));
+    cout<<"this is c:"<<endl;
     c.printGrapgh();
 
-    Graph D= Graph(4);
+    cout<<"try D:"<<endl;
+
+    Graph D= Graph(5);
     D.add(1,2,1);
     D.add(1,3,1);
     D.add(2,3,8);
     D.add(3,4,5);
     D.add(2,4,1);
-    D=DIKSTRA(D,D.getNodeAtIndex(0));
+    DIKSTRA(D,D.getNodeAtIndex(1));
+    cout<<"this is D:"<<endl;
+    
+    for (int i = 0; i < D.getNumOfNode(); i++)
+    {
+        cout<<"in node:"<<i<<"the min is:"<<D.getNodeAtIndex(i)->getValue()<<endl;
+    }
+    
 
     
     
