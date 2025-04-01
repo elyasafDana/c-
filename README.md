@@ -71,19 +71,20 @@ class Node{
     
 
 
-    void delSon(Node* v){
+    bool delSon(Node* v){
         int delNum= (*v).getName();
         bool found=false;
         for(int i=0;i<index;i++){
             if ((*son)[i].getName()==delNum )
             {
                 found=true;
-                delete son[i];
+                 son[i]=NULL;
                  weight[i]=0;
                 while (i<index)
                 {
                    son[i]=son[i+1];
                    weight[i]=weight[i+1];
+                   i++;
                 }
                 index--;
                 
@@ -92,8 +93,11 @@ class Node{
         }
         if (!found)
         {
+            return false;
+            cout<<"couldnt fins such son"<<endl;
             //here we need to add error
         }
+        return true;
     
 
     }
@@ -131,6 +135,18 @@ class Node{
         void add(int v,int u){
             arr[v].addSon(&arr[u],1);
             arr[u].addSon(&arr[v],1);
+        }
+
+        void addOne(int v,int u,int w){
+            arr[v].addSon(&arr[u],w);
+
+        }
+        void addOne(int v,int u){
+            arr[v].addSon(&arr[u],1);
+
+        }
+        void delOne(int v,int u){
+            (arr[v]).delSon(&arr[u]);
         }
 
         void del(int v,int u){
@@ -213,6 +229,20 @@ class Node{
             return remove(0);
             
         }
+        bool isInside(Node* n){
+            for (int i = 0; i < index; i++)
+            {
+                if (arr[i]->getName()==n->getName())
+                {
+                    return true;
+                }
+                
+            }
+            return false;
+        
+            
+
+        }
 
         Node* remove(int x){
             Node* r=arr[x];
@@ -260,6 +290,7 @@ class Node{
             int minIndex=0;
             for (int i = 0; i < index; i++)
             {
+                cout<<arr[i]->getValue()<<endl;
                 if(arr[i]->getValue()<minValue){
                     minValue=arr[i]->getValue();
                     min=arr[i];
@@ -278,8 +309,8 @@ class Node{
              index--;
              return min;
              */
-            
-            return remove(minIndex);
+            Node * c=remove(minIndex);
+            return c;
         }
 
     };
@@ -392,6 +423,44 @@ class Node{
             }
 
 
+            Graph PRIME(Graph g){
+                Graph rg= Graph(g.getNumOfNode());
+                Ququ q= Ququ();
+                for (int i = 0; i < g.getNumOfNode(); i++)
+                {
+                    q.add(g.getNodeAtIndex(i));
+                }
+                g.getNodeAtIndex(1)->setValue(0);
+
+                while (!q.isEmpty())
+                {
+                    Node* n=q.getMin();
+                    Node** sons=n->getSons();
+                    int* w=n->getWeight();
+                    cout<<"all set"<<endl;
+
+                    for (int i = 0; i < n->getNumOfSons(); i++)
+                    {
+                        if(q.isInside(sons[i]) &&w[i]<sons[i]->getValue()){
+                            cout<<"inside "<<sons[i]->getName()<<endl;
+                            if(rg.getNodeAtIndex(sons[i]->getName())->getNumOfSons() ==1){
+                                Node** granson=rg.getNodeAtIndex(sons[i]->getName())->getSons();
+                                rg.delOne(sons[i]->getName(),granson[0]->getName());
+                            }
+                            rg.addOne(sons[i]->getName(),n->getName());
+                            sons[i]->setValue(w[i]);
+                        }
+                    }
+                    
+                }
+
+                return rg;
+                
+                
+
+            }
+
+
 
         
 
@@ -448,7 +517,7 @@ class Node{
     c.printGrapgh();
 
     cout<<"try D:"<<endl;
-
+    /*
     Graph D= Graph(5);
     D.add(1,2,1);
     D.add(1,3,1);
@@ -462,7 +531,17 @@ class Node{
     {
         cout<<"in node:"<<i<<"the min is:"<<D.getNodeAtIndex(i)->getValue()<<endl;
     }
+        */
     
+    Graph E= Graph(5);
+    E.add(1,4,8);
+    E.add(1,2,5);
+    E.add(2,3,2);
+    E.add(2,4,1);
+    E.add(4,3,1);
+    cout<<"this is F:"<<endl;
+    Graph F=PRIME(E);
+    F.printGrapgh();
 
     
     
