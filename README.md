@@ -343,26 +343,51 @@ class Node{
             Graph rg=Graph(g.getNumOfNode());
             Node** sons=n->getSons();
 
-           
-
-            
-
-
-            for (int i = 0; i < g.getNumOfNode(); i++)
-            {
-                sons=g.getNodeAtIndex(i)->getSons();
-                cout<<"inside for"<<endl;
-                if (sons[i]!=NULL&&sons[i]->isWhite())
+            bool isFirst=true;
+            for (int i = n->getName(); i < g.getNumOfNode(); i++)
+            {cout<<"name "<<i<<endl;
+                if (g.getNodeAtIndex(n->getName())->isWhite())
                 {
                     cout<<"inside "<<i<<endl;
 
-                    dfsVISIT(sons[i],&rg);
+                    dfsVISIT(g.getNodeAtIndex(i),&rg);
+                    
                 }
                 
             }
             return rg;
 
+
         }
+
+        Graph DIKSTRA(Graph g,Node* n){
+            Ququ q=  Ququ();
+            for(int i=0;i<g.getNumOfNode();i++){
+                g.getNodeAtIndex(i)->setValue(__INT_MAX__);
+
+            }
+            g.getNodeAtIndex(n->getName())->setValue(0);
+            for(int i=0;i<g.getNumOfNode();i++){
+            q.add(g.getNodeAtIndex(i));
+            }
+
+            while(!q.isEmpty()){
+                Node * temp=q.getMin();
+                Node** sons=temp->getSons();
+                int * w=temp->getWeight();
+
+                for(int i=0;i<temp->getNumOfSons();i++){
+                    if(w[i]+n->getValue()<sons[i]->getValue()){
+                        sons[i]->setValue(w[i]+n->getValue());
+                    }
+                }
+            }
+            return g;
+            }
+
+
+
+        
 
         
 
@@ -412,8 +437,17 @@ class Node{
 
     cout<<"this is c:"<<endl;
 
-    Graph c=DFS(A,A.getNodeAtIndex(0));
+    Graph c=DFS(A,A.getNodeAtIndex(6));
     c.printGrapgh();
+
+    Graph D= Graph(4);
+    D.add(1,2,1);
+    D.add(1,3,1);
+    D.add(2,3,8);
+    D.add(3,4,5);
+    D.add(2,4,1);
+    D=DIKSTRA(D,D.getNodeAtIndex(0));
+
     
     
     
