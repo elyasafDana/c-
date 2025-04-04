@@ -173,6 +173,8 @@ class Node{
         Node* getNodeAtIndex(int index){
             return &(arr[index]);
         }
+
+        
     
     
     };
@@ -315,6 +317,130 @@ class Node{
 
     };
 
+
+    class WeightNode {
+        private:
+            Node* from;
+            Node* to;
+            int w;
+        
+        public:
+            WeightNode() : from(NULL), to(NULL), w(0) {}
+        
+            WeightNode(Node* v, Node* u, int weight) : from(v), to(u), w(weight) {}
+        
+            Node* getFrom() const {
+                return from;
+            }
+        
+            void setFrom(Node* v) {
+                from = v;
+            }
+        
+            Node* getTo() const {
+                return to;
+            }
+        
+            void setTo(Node* u) {
+                to = u;
+            }
+        
+            int getW() const {
+                return w;
+            }
+        
+            void setW(int weight) {
+                w = weight;
+            }
+        };
+        
+        class WList {
+            private:
+                WeightNode** weightNodes;  
+                int capacity;
+                int size;// מספר האלמנטים הנוכחיים במערך 
+            
+                void resize() {
+                    capacity *= 2;
+                    WeightNode** newWeightNodes = new WeightNode*[capacity];
+                    for (int i = 0; i < size; ++i) {
+                        newWeightNodes[i] = weightNodes[i];
+                    }
+                    delete[] weightNodes;
+                    weightNodes = newWeightNodes;
+                }
+            
+            public:
+                WList() : capacity(2), size(0) {
+                    weightNodes = new WeightNode*[capacity];  
+                }
+            
+                ~WList() {
+                    for (int i = 0; i < size; ++i) {
+                        delete weightNodes[i];  
+                    }
+                    delete[] weightNodes;
+                }
+            
+                void add(const WeightNode& wn) {
+                    if (size == capacity) {
+                        resize();
+                    }
+                    weightNodes[size++] = new WeightNode(wn);  
+                }
+            
+                WeightNode* get(int index)  {
+                    if (index >= 0 && index < size) {
+                        return weightNodes[index];
+                    }
+                    throw out_of_range("Index out of range");
+                }
+            
+                void remove(int index) {
+                    if (index >= 0 && index < size) {
+                        delete weightNodes[index];  // משחרר את ה-WeightNode במצביע
+                        for (int i = index; i < size - 1; ++i) {
+                            weightNodes[i] = weightNodes[i + 1];
+                        }
+                        --size;
+                    } else {
+                        cout << "Index out of range." << endl;
+                    }
+                }
+            
+                void add(Node* from, Node* to, int weight) {
+                    WeightNode wn(from, to, weight);
+                    add(wn);
+                }
+            
+                void print()  {
+                    for (int i = 0; i < size; ++i) {
+                        cout << "WeightNode " << i << " -> from: " << weightNodes[i]->getFrom() 
+                             << ", to: " << weightNodes[i]->getTo() 
+                             << ", weight: " << weightNodes[i]->getW() << endl;
+                    }
+                }
+            
+                int getSize()  {
+                    return size;
+                }
+                
+                void sort() {
+                    for (int i = 0; i < size - 1; ++i) {
+                        for (int j = 0; j < size - 1 - i; ++j) {
+                            if (weightNodes[j]->getW() > weightNodes[j + 1]->getW()) {
+                            
+                                WeightNode* temp = weightNodes[j];
+                                weightNodes[j] = weightNodes[j + 1];
+                                weightNodes[j + 1] = temp;
+                            }
+                        }
+                    }
+                }
+
+
+            };
+
     }
 
     namespace Algorithms{
@@ -451,6 +577,7 @@ class Node{
                             sons[i]->setValue(w[i]);
                         }
                     }
+                 
                     
                 }
 
@@ -458,6 +585,77 @@ class Node{
                 
                 
 
+            }
+
+            bool canReach(Graph g,int from, int to){
+                Ququ q= Ququ();
+            for (int  i = 0; i <g.getNumOfNode() ; i++)
+            {
+
+                g.getNodeAtIndex(i)->setColor(true);
+            }
+            g.getNodeAtIndex(from)->setColor(false);
+            q.add(g.getNodeAtIndex(from));
+
+            while (!q.isEmpty())
+            {
+                
+                Node* n= q.getFirst();
+            
+                Node** sons=n->getSons();
+                for (int i = 0; i < n->getNumOfSons(); i++)
+                {
+                    if (sons[i]->isWhite())
+                    {
+                        if (sons[i]->getName()==to)
+                        {
+                            return true;
+                        }
+                        
+                        sons[i]->setColor(false);
+                        q.add(sons[i]);
+                    }
+                }
+                
+            }
+            return false;
+
+            }
+
+            Graph KRUSKAL(Graph g){
+
+                WList q=WList();
+                for (int i = 0; i <g.getNumOfNode(); i++)
+                {
+                    Node * n=g.getNodeAtIndex(i);
+                    Node** sons=n->getSons();
+                    int* w=n->getWeight();
+                    for (int j = 0; j < n->getNumOfSons(); j++)
+                    {
+                        q.add(n,sons[j],w[j]);
+                    }
+                }
+
+                q.sort();
+                 Graph rg= Graph(g.getNumOfNode());
+                 rg.printGrapgh();
+                 //cout<<"asddas :"<<rg.getNodeAtIndex(0)->getSons()[0]->getName()<<endl;
+                 for (int i = 0; i < q.getSize(); i++)
+                 {
+                    WeightNode* n=q.get(i);
+                    cout<<"tring to reach from:"<<n->getFrom()->getName()<<" to: "<<n->getTo()->getName();
+                    if (! canReach(rg,n->getFrom()->getName(),n->getTo()->getName()))
+                 {
+                    cout<<"add"<<endl;
+                    rg.addOne(n->getFrom()->getName(),n->getTo()->getName(),n->getW());
+                 }
+                 
+                    
+                    
+                 }
+                 
+
+                 return rg;
             }
 
 
@@ -540,8 +738,14 @@ class Node{
     E.add(2,4,1);
     E.add(4,3,1);
     cout<<"this is F:"<<endl;
-    Graph F=PRIME(E);
+    cout<<canReach(E,E.getNodeAtIndex(0)->getName(),E.getNodeAtIndex(3)->getName())<<endl;
+    Graph F=KRUSKAL(E);
     F.printGrapgh();
+    
+
+    
+    
+
 
     
     
